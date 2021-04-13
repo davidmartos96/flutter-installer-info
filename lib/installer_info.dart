@@ -9,11 +9,15 @@ const _channel = MethodChannel('com.caiopo.installer_info');
 /// On Android API 29 and below, uses Context.getInstallerPackageName()
 /// On Android API 30 and above, uses PackageManager.getInstallSourceInfo()
 /// On iOS, parses Bundle.main.appStoreReceiptURL
-Future<InstallerInfo> getInstallerInfo() async {
+Future<InstallerInfo?> getInstallerInfo() async {
   final installerName = await _channel.invokeMethod('getInstallerInfo');
   if (installerName == null) return null;
 
   final installer = _installerNames[installerName];
+  if (installer == null) {
+    assert(false, "Unknown installer $installerName");
+    return null;
+  }
   return InstallerInfo(installerName, installer);
 }
 
